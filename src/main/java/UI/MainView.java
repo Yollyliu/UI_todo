@@ -10,6 +10,7 @@ import core.TodoList;
 import persistence.Persistence;
 import persistence.PersistenceJson;
 import persistence.PersistenceText;
+import service.TodoService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,9 +18,12 @@ import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
 public class MainView extends View {
+
+
     private TodoList list;
 
     private Persistence persistence = new PersistenceJson();
+    private TodoService service;
     private final static int paddingNormal = 10;
     private final static int cellHeight = 30;
     private final static int panelHeight = 40;
@@ -31,7 +35,7 @@ public class MainView extends View {
     private View containerView;
 
     private Button addButton;
-    private Button deleteButton;
+
     private TextField textField;
 
 
@@ -40,6 +44,8 @@ public class MainView extends View {
         super.init();
         list = Repository.todoList;
         itemLabels = new LinkedList <>();
+        service=new TodoService();
+        list=service.get();
     }
 
     @Override
@@ -83,10 +89,10 @@ public class MainView extends View {
         addButton.setLocation(this.getWidth() - paddingSmall - addButton.getWidth(), paddingSmall);
         inputView.add(addButton);
 
-        deleteButton = new Button("delete");
-        deleteButton.setSize(100, cellHeight);
-        deleteButton.setLocation(this.getWidth() - paddingSmall - addButton.getWidth()- addButton.getWidth(), paddingSmall);
-        inputView.add(deleteButton);
+//        deleteButton = new Button("delete");
+//        deleteButton.setSize(100, cellHeight);
+//        deleteButton.setLocation(this.getWidth() - paddingSmall - addButton.getWidth()- addButton.getWidth(), paddingSmall);
+//        inputView.add(deleteButton);
 
         textField = new TextField();
         textField.setSize(addButton.getX() - 2 * paddingSmall, cellHeight);
@@ -103,9 +109,12 @@ public class MainView extends View {
                 String text = textField.getText();
                 TodoItem todoItem = new TodoItem();
                 todoItem.setText(text);
-                list.add(todoItem);
-                MainView.this.remove(containerView);
+             //   list.add(todoItem);
 
+                service.add(todoItem);
+
+
+                MainView.this.remove(containerView);
                 containerView = new View();
                 containerView.setLocation(0, titleLable.getY() + titleLable.getHeight() + paddingNormal);
                 containerView.setSize(MainView.this.getWidth(), MainView.this.getHeight() - containerView.getY() - paddingNormal - panelHeight);
@@ -136,40 +145,41 @@ public class MainView extends View {
             }
         });
 
-
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                String text = textField.getText();
-                TodoItem todoItem = new TodoItem();
-                todoItem.setText(text);
-                list.delete(todoItem);
-                MainView.this.remove(containerView);
-
-                containerView = new View();
-                containerView.setLocation(0, titleLable.getY() + titleLable.getHeight() + paddingNormal);
-                containerView.setSize(MainView.this.getWidth(), MainView.this.getHeight() - containerView.getY() - paddingNormal - panelHeight);
-                MainView.this.add(containerView);
-
-                int y = 0;
-                for (TodoItem item : list.getItems()) {
-                    Label label = new Label();
-                    label.setText(item.getText());
-                    label.setLocation(paddingNormal, y);
-                    label.setSize(MainView.this.getWidth() - 2 * paddingNormal, cellHeight);
-                    containerView.add(label);
-                    //this.add(label);
-                    //itemLabels.add(label);
-                    y += label.getHeight() + paddingNormal;
-                }
-
-                textField.setText("");
-                persistence.save(list);
-
-
-            }
-        });
+//
+//        deleteButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                String text = textField.getText();
+//                TodoItem todoItem = new TodoItem();
+//                todoItem.setText(text);
+//                list.delete(todoItem);
+//                MainView.this.remove(containerView);
+//
+//
+//                containerView = new View();
+//                containerView.setLocation(0, titleLable.getY() + titleLable.getHeight() + paddingNormal);
+//                containerView.setSize(MainView.this.getWidth(), MainView.this.getHeight() - containerView.getY() - paddingNormal - panelHeight);
+//                MainView.this.add(containerView);
+//
+//                int y = 0;
+//                for (TodoItem item : list.getItems()) {
+//                    Label label = new Label();
+//                    label.setText(item.getText());
+//                    label.setLocation(paddingNormal, y);
+//                    label.setSize(MainView.this.getWidth() - 2 * paddingNormal, cellHeight);
+//                    containerView.add(label);
+//                    //this.add(label);
+//                    //itemLabels.add(label);
+//                    y += label.getHeight() + paddingNormal;
+//                }
+//
+//                textField.setText("");
+//                persistence.save(list);
+//
+//
+//            }
+//        });
     }
 
     protected void viewDidDisplay(){
